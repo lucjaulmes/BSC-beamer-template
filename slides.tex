@@ -1,0 +1,277 @@
+\documentclass[c,12pt]{beamer}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+%list required packages
+\usepackage{listings}
+\usepackage{textcomp}
+\usepackage{graphics}
+
+
+% All paths where you store your figures:
+\graphicspath{{beamertheme/}{Figures/}}
+
+
+% main theme -- slight hack in name, usetheme{foo} includes 'beamerthemefoo.sty'
+\usetheme{/BSC}
+% theme defines
+% - front page, frame headers and footers
+% - bullets for {block}
+% - outlines at each section
+% - the \notocsection command, equivalent to \section without outline before
+% - style of pages if used (toggled with 'notes' option to beamer), with smaller (75%) current slide and notes (from \note{} commands) listed below
+% - \includesvg command, to replace \includegraphics for svg where the text needs to be parsed by LaTeX (e.g. $x$) -- use without .svg extension
+
+
+%% uncomment next line and present with pympress to force notes on second screen (pympress will show time, etc)
+%\setbeameroption{show notes on second screen=right}
+
+%% uncomment next line and present with pympress to force hiding the notes
+%\setbeameroption{hide notes}
+
+\mode<handout>{
+	\setbeameroption{hide notes}
+	\pgfpagesuselayout{4 on 1}[a4paper,border shrink=5mm,landscape]
+	%alternatively, 2 slides per page:
+	%\pgfpagesuselayout{2 on 1}[a4paper,border shrink=5mm]
+}
+
+% for a svg file that has latex text in it, use \includesvg[width]{svg_file_name} or \includesvg{svg_file_name} (without .svg extension)
+% otherwise just use includegraphics
+
+
+% listings style (to display code)
+\lstset{%
+	language=C++,
+	basicstyle=\ttfamily,
+	keywordstyle=\bfseries,
+	stringstyle=\color{magenta},
+	commentstyle=\color{olive},
+	moredelim=[l][\color{blue}]{\#pragma},
+	mathescape,
+	tabsize=4,
+	frame=trbl,
+	basicstyle=\ttfamily\footnotesize
+}
+
+
+\title[BSC styled beamer tutorial]{How to use the BSC theme for beamer}
+\author{Luc Jaulmes}
+\date{2015}
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+\section{Package}
+\subsection{Theme}
+
+\begin{frame}[fragile]
+	\frametitle{Style definitions in theme}
+	\begin{block}{Usual stuff}
+		\begin{itemize}
+			\item BSC look: first page, footer, header, bullets for blocks
+			\item Outlines before each section
+			\item Notes page with miniature of current page + notes from \verb|\notes{}| commands
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Command definitions}
+	\begin{block}{New commands}
+		\begin{itemize}
+			\item the \verb|\notocsection| command, equivalent to \textbackslash section without outline before
+			\item the \verb|\includesvg[optional width]{svg figure}| command, where the figure is given without the .svg extension, which includes a svg with latex-text inside
+		\end{itemize}
+	\end{block}
+	\pause
+	\begin{block}{Extended commands}
+		\begin{itemize}
+			\item the \verb|\appendix| command now stops slide numbering
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Bibliography}
+	\begin{block}{You can cite as in any latex document}
+		Citations integrate with the footnotes between the logos.
+		\begin{itemize}
+			\item Add a .bib file: \verb|\addbibresource{bib file}|
+			\item Predefined style example: \verb|\cite{lamport2010}|
+			\item Full citation example: \verb|\footfullcite{Lamport2010}|
+			\item Same only on slide 2 of the frame: \verb|\footnote<2>{\fullcite{Lamport2010}}|
+			\item set predefined style (before loading theme):
+		\end{itemize}
+		\verb|\PassOptionsToPackage{style=authortitle}{biblatex}|
+	\end{block}
+\end{frame}
+
+\subsection[make]{Makefile}
+
+\begin{frame}[fragile]
+	\frametitle[Makefile ft.]{Features in the Makefile}
+	\begin{block}{targets}
+		\begin{itemize}
+			\item By default: builds slides for all .tex files in directory
+			\item notes: builds slides with content of \verb|\notes{}| commands.\\ Try opening with pympress for example.
+			\item handout: builds slides with 4 slides per page, no transitions
+			\item clean: removes all generated files except .pdf
+			\item allclean: removes all generated files
+		\end{itemize}
+	\end{block}
+	\note{You won't see this in the normal presentation}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Figures}
+	\begin{block}{svg files}
+		\begin{itemize}
+			\item requires inkscape
+			\item Builds .pdf\_tex for every latex-text containing svg figure
+			\item Builds .pdf for every other containing svg figure
+		\end{itemize}
+	\end{block}
+
+	\begin{block}{On Windows}
+		\begin{itemize}
+			\item A script called \texttt{make\_figures\_on\_windows.bat} calls inkscape to export svg files to pdf / pdf\_tex
+			\item Same behaviour as the Makefile on Linux
+			\item Then just import the main.tex file in your \LaTeX editor
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\section{Package again}
+\subsection{Theme}
+
+\begin{frame}[fragile]
+	\frametitle{Style definitions in theme}
+	\begin{block}{Usual stuff}
+		\begin{itemize}
+			\item BSC look: first page, footer, header, bullets for blocks
+			\item Outlines before each section
+			\item Notes page with miniature of current page + notes from \verb|\notes{}| commands
+		\end{itemize}
+	\end{block}
+	\pause
+	\begin{block}{New commands}
+		\begin{itemize}
+			\item the \verb|\notocsection| command, equivalent to \textbackslash section without outline before
+			\item the \verb|\includesvg[optional width]{svg figure}| command, where the figure is given without the .svg extension, which includes a svg with latex-text inside
+		\end{itemize}
+	\end{block}
+	\pause
+	\begin{block}{Extended commands}
+		\begin{itemize}
+			\item the \verb|\appendix| command now stops slide numbering
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\subsection{Makefile}
+
+\begin{frame}[fragile]
+	\frametitle{Features in the Makefile}
+	\begin{block}{targets}
+		\begin{itemize}
+			\item By default: builds slides for all .tex files in directory
+			\item notes: builds slides with content of \verb|\notes{}| commands.\\ Try opening with pympress for example.
+			\item handout: builds slides with 4 slides per page, no transitions
+			\item clean: removes all generated files except .pdf
+			\item allclean: removes all generated files
+		\end{itemize}
+	\end{block}
+	\note{You won't see this in the normal presentation}
+	\pause
+	\begin{block}{svg files}
+		\begin{itemize}
+			\item requires inkscape
+			\item Builds .pdf\_tex for every latex-text containing svg figure
+			\item Builds .pdf for every other containing svg figure
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}
+	\frametitle{This stuff is cool}
+	\begin{block}{Should make it easy for presentations}
+		\begin{itemize}
+			\item Try opening with pympress for presentations with notes.
+		\end{itemize}
+	\end{block}
+	\note{You won't see this in the normal presentation}
+	\pause
+	\begin{block}{svg files}
+		\begin{itemize}
+			\item requires inkscape
+			\item Builds .pdf\_tex for every latex-text containing svg figure
+			\item Builds .pdf for every other containing svg figure
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\appendix
+
+\begin{frame}[fragile]
+	\frametitle{This is a backup slide}
+	\begin{block}{Here is a figure of some tasks being scheduled}
+		It has some latex text content such as \verb|\alpha|
+		\begin{figure}[h!]
+		\centering
+		\tiny % affects the font sizes in figure
+		\includesvg[0.4\linewidth]{syntethictrace_async}
+		\end{figure}
+	\end{block}
+	\vspace{-1em}\pause
+	\begin{block}{The process of generating a TaskSim trace}
+		\begin{columns}
+		\begin{column}{0.3\linewidth}
+			\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{tracing_architecture}
+			\end{figure}
+		\end{column}
+		\begin{column}{0.5\linewidth}
+			This figure is just plain svg, so include a .pdf . Any other graphics format works as well (png, jpg, etc)
+		\end{column}
+		\end{columns}
+	\end{block}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+	\frametitle{This is another backup slide}
+	\begin{block}{Here is a figure of some tasks being scheduled}
+		It has some latex text content such as \verb|\alpha|
+		\begin{figure}[h!]
+		\centering
+		\tiny % affects the font sizes in figure
+		\includesvg[0.4\linewidth]{syntethictrace_async}
+		\end{figure}
+	\end{block}
+	\vspace{-1em}
+	\begin{block}{The process of generating a TaskSim trace}
+		\begin{columns}
+		\begin{column}{0.3\linewidth}
+			\begin{figure}[h!]
+			\centering
+			\includegraphics[width=\linewidth]{tracing_architecture}
+			\end{figure}
+		\end{column}
+		\begin{column}{0.5\linewidth}
+			This figure is just plain svg, so include a .pdf . Any other graphics format works as well (png, jpg, etc)
+		\end{column}
+		\end{columns}
+	\end{block}
+\end{frame}
+
+
+\end{document}
+

@@ -1,0 +1,347 @@
+\ProvidesPackage{beamertheme/BSC}[16/05/2014]
+
+\setbeamertemplate{navigation symbols}{}%remove navigation symbols
+\usecolortheme{whale}%use a blue base theme
+\usefonttheme{structurebold}
+
+\setbeamerfont{title page}{series=\bfseries}
+\setbeamerfont{frametitle}{size=\large}
+\setbeamerfont{title}{size*={22}{20}}
+
+\usepackage{xcolor}
+\definecolor{darkred}{HTML}{CE0000}%
+% something like http://www.colorcombos.com/color-schemes/115/ColorCombo115.html ?
+
+\setbeamercolor{title}{bg=}
+\setbeamercolor{frametitle}{bg=}
+\setbeamercolor{title page}{fg=white}
+\setbeamercolor{block title alerted}{fg=darkred}
+
+\usepackage[numbered]{bookmark}
+\usepackage{etoolbox}
+\def\skipframebookmark{0}
+
+\patchcmd{\beamer@section}%
+	{\Hy@writebookmark{\the\c@section}{\secname}}%
+	{\Hy@writebookmark{\the\c@section}{\numberline{\thesection}\secname}}%
+	{}{\errmessage{failed to patch}}
+\patchcmd{\beamer@subsection}%
+	{\Hy@writebookmark{\the\c@subsection}{#2}}%
+	{\Hy@writebookmark{\the\c@subsection}{\numberline{\thesection.\thesubsection}#2}}%
+	{}{\errmessage{failed to patch}}
+\patchcmd{\beamer@subsubsection}%
+	{\Hy@writebookmark{\the\c@subsubsection}{#2}}%
+	{\Hy@writebookmark{\the\c@subsubsection}{\numberline{\thesection.\thesubsection.\thesubsubsection}#2}}%
+	{}{\errmessage{failed to patch}}
+
+\apptocmd{\beamer@@frametitle}%
+	{\ifnum\skipframebookmark=0\only<1>{\bookmark[page=\the\c@page,level=4]{#2}}\fi}%
+	{}{\errmessage{failed to patch}}
+
+\setbeamertemplate{headline}{}
+\setbeamertemplate{frametitle}
+{%
+	\vskip-3pt%
+	\leavevmode%
+		\hbox{%
+			\begin{beamercolorbox}[wd=\paperwidth,ht=.08125\paperwidth,dp=0pt]{background}%
+				\includegraphics[width=\paperwidth,height=.08125\paperwidth]{header.pdf}%
+			\end{beamercolorbox}%
+		}\vskip-.08125\paperwidth%
+		\hbox{%
+			\begin{beamercolorbox}[wd=\paperwidth,ht=.08125\paperwidth,dp=0pt]{frametitle}%
+				\raggedright\hspace*{1em}%
+				\strut%
+				\insertframetitle%
+				\strut%
+				\vspace{0ex}%
+			\end{beamercolorbox}%
+		}%
+}
+
+
+\setbeamertemplate{background canvas}{
+	\ifnum \insertframenumber=0%
+		%%% this adjusts the crop top so the image is bottom aligned
+		\newbox\bg%
+		\setbox\bg=\vbox{\begingroup%
+			\includegraphics[width=\paperwidth,keepaspectratio,clip=false]{firstpage.jpg}%
+			\endgroup%
+		}%
+		\newlength\crop%
+		\setlength{\crop}{\ht\bg}%
+		\addtolength{\crop}{-\paperheight}%
+		\includegraphics[width=\paperwidth,keepaspectratio,clip,trim={0 0 0 {1\crop}}]{firstpage.jpg}
+		\bookmark[page=\the\c@page,level=1]{\beamer@shorttitle}
+	\fi
+}
+
+\usepackage[backend=bibtex]{biblatex}
+
+
+% patch frame to reset footlinebox
+\let\beamer@original@frame=\frame
+\def\frame{\global\setbox\mybeamerfootins=\box\voidb@x\beamer@original@frame}
+
+
+\newcounter{slidenumber}
+
+\newbox\bsclogo
+\setbox\bsclogo=\hbox{\hspace{0.1cm}\includegraphics[height=0.7cm]{bsc_logo.pdf}}%
+
+\newbox\romollogo
+\setbox\romollogo=\hbox{\includegraphics[height=0.7cm]{romol.pdf}}
+
+\newlength\footlineextraspace
+\setlength{\footlineextraspace}{\paperwidth}
+\addtolength{\footlineextraspace}{-4em} % page numbering
+\addtolength{\footlineextraspace}{-\wd\bsclogo}
+\addtolength{\footlineextraspace}{-\wd\romollogo}
+
+
+% redefine a box for footnotes
+\newbox\mybeamerfootins
+
+\renewcommand<>\beamer@framefootnotetext[1]{%
+	\global\setbox\mybeamerfootins\vbox{%
+		\unvbox\mybeamerfootins
+		\reset@font\footnotesize
+		\hsize\footlineextraspace
+		\@parboxrestore
+		\protected@edef\@currentlabel
+				 {\csname p@footnote\endcsname\@thefnmark}%
+		\color@begingroup
+			\only#2{\@makefntext{%
+				\rule\z@\footnotesep\ignorespaces#1\@finalstrut\strutbox}}%
+		\color@endgroup}}
+
+\renewcommand<>\@mpfootnotetext[1]{%
+	\global\setbox\mybeamerfootins\vbox{%
+		\unvbox\mybeamerfootins
+		\reset@font\footnotesize
+		\hsize\footlineextraspace
+		\@parboxrestore
+		\protected@edef\@currentlabel
+				 {\csname p@mpfootnote\endcsname\@thefnmark}%
+		\color@begingroup
+			\only#2{\@makefntext{%
+				\rule\z@\footnotesep\ignorespaces#1\@finalstrut\strutbox}}%
+		\color@endgroup}}
+
+\let\@footnotetext=\beamer@framefootnotetext
+
+% some footnote styling
+\setbeamerfont{footnote}{size=\scriptsize}
+\setbeamerfont{footnote mark}{size=\tiny}
+
+\setbeamertemplate{footline}
+{%
+	\nointerlineskip%
+	\ifnum \insertframenumber=0%
+	\else \leavevmode \hbox{%
+		\begin{beamercolorbox}[ht=0.8cm,dp=0.1cm,wd=\paperwidth]{}
+			\usebox{\bsclogo}
+			\hfill%
+			\hbox{\parbox[t]{\footlineextraspace}{\hbox{\usebox{\mybeamerfootins}}}}%
+			\global\setbox\mybeamerfootins=\box\voidb@x%
+			\hfill%
+			\usebox{\romollogo}
+			\ifnum\mainend>0% appendix page numbering
+				\hbox to 3em{Appx.~\Alph{framenumber}}%
+				\hbox to 1em{}%
+			\else % page number frame.sub-slide / total frames
+				\setcounter{slidenumber}{\insertpagenumber}%
+				\addtocounter{slidenumber}{-\insertframestartpage}%
+				\addtocounter{slidenumber}{1}%
+				\hbox to 4em{\insertframenumber.\arabic{slidenumber}/\inserttotalframenumber}%
+			\fi %
+		\end{beamercolorbox}
+	} \fi%
+}
+
+
+\setbeamertemplate{block begin}{%
+	\vskip.75ex%
+	\begin{beamercolorbox}{block title}%
+	\includegraphics[height=0.3cm]{bullet.pdf}
+	\usebeamerfont*{block title}~\insertblocktitle%
+	\end{beamercolorbox}%
+	\vskip.5ex %
+	\usebeamerfont{block body}%
+	\hspace*{0.05\linewidth}%
+	\begin{beamercolorbox}[wd=0.95\linewidth]{block body}%
+}
+
+\addtobeamertemplate{title page}{\vskip3cm}{}
+
+% show style of note pages
+\usepackage{pgfpages}
+\setbeamertemplate{note page}[default]
+
+\defbeamertemplate*{note page}{big_preview}
+{%
+	{%
+		\scriptsize
+		\insertvrule{.75\paperheight}{white!90!black}
+		\nointerlineskip
+		\insertvrule{0.4pt}{black}
+		\vskip-.75\paperheight
+		\vskip-0.4pt
+		\nointerlineskip
+		\vbox{%
+		\hbox{%
+		\hskip-\Gm@rmargin\hskip 0.25\paperwidth%
+	\ifnum \insertframenumber=0%
+		\begin{pgfpicture}{0cm}{0cm}{0.75\paperwidth}{0.75\paperheight}%
+			\begin{pgflowlevelscope}{\pgftransformscale{0.75}}
+				{\pgftransformshift{\pgfpointorigin}\pgftext[left,bottom]{\includegraphics[width=\paperwidth,height=\paperheight]{firstpage.jpg}}}
+				\color{normal text.fg}
+				{\pgftransformshift{\pgfpoint{\beamer@origlmargin}{\footheight}}\pgftext[left,bottom]{\copy\beamer@frameboxcopy}}
+			\end{pgflowlevelscope}
+		\end{pgfpicture}%
+	\else%
+		\begin{pgfpicture}{0cm}{0cm}{0.75\paperwidth}{0.75\paperheight}%
+			\begin{pgflowlevelscope}{\pgftransformscale{0.75}}
+				\color{white}
+				\pgfpathrectangle{\pgfpointorigin}{\pgfpoint{\paperwidth}{\paperheight}}
+				\pgfusepath{fill}
+				\color{normal text.fg}
+				{\pgftransformshift{\pgfpoint{\beamer@origlmargin}{\footheight}}\pgftext[left,bottom]{\copy\beamer@frameboxcopy}}
+			\end{pgflowlevelscope}
+		\end{pgfpicture}%
+	\fi%
+		\hskip-\Gm@rmargin\hskip0pt%
+		}%
+		\vskip-0.75\paperheight%
+		}%
+		\nointerlineskip
+		\hskip-\Gm@rmargin\hskip0pt%
+		%always show title
+		\vbox to .75\paperheight{\vskip0.5em
+		\vbox{\small\textbf{\insertshorttitle[width=.25\paperwidth]}}%
+		%
+		\setbox\beamer@tempbox=\hbox{\insertsection}%
+		\vbox{\ifdim\wd\beamer@tempbox>1pt
+			\vbox{\vskip0.25em\hskip0.025\paperwidth\vrule width .20\paperwidth height0.4pt\vskip0.25em}%
+			\vbox{\begin{minipage}[t]{.25\paperwidth}\centering\footnotesize\insertsection\end{minipage}}
+		\fi}%
+		%
+		\setbox\beamer@tempbox=\hbox{\insertsubsection}%
+		\vbox{\ifdim\wd\beamer@tempbox>1pt
+			\vbox{\hskip0.025\paperwidth\vrule width .20\paperwidth height0.4pt}
+			\begin{minipage}[t]{.25\paperwidth}\centering\insertsubsection\end{minipage}%
+		\fi}%
+		\vfil%
+		\vbox{%
+			\begin{minipage}[t]{.25\paperwidth}%
+				\centering\small\insertdate%
+				\\%
+				\insertframenumber/\inserttotalframenumber%
+			\end{minipage}
+			}%
+		\vskip.25em%
+		}%
+	}%
+	\vskip0pt%
+	\hbox{%
+		\hskip-\Gm@rmargin\hskip0pt%
+		\begin{minipage}[t]{\paperwidth}\vskip-0.5cm\insertnote\end{minipage}%
+	}
+}
+
+\setbeamertemplate{itemize item}[circle]
+
+
+% utilities for inkscape-generated pdf's from latex-enabled svg's
+% go over every item in graphicspath; break when file.pdf_tex is found
+\usepackage{xparse}
+\ExplSyntaxOn
+\NewDocumentCommand{\includesvg}{O{\columnwidth} m}
+{
+	\def\svgwidth{#1}%
+	\tl_map_inline:cn { Ginput@path }
+	{
+		\IfFileExists{##1#2.pdf_tex}{ \input{##1#2.pdf_tex} \tl_map_break: }{}
+	}
+}
+\ExplSyntaxOff
+
+% simple alternative (only one directoy checked):
+%\newcommand{\includesvg}[2][\columnwidth]{%
+%	\def\svgwidth{#1}%
+%	\input{Figures/#2.pdf_tex}
+%}
+
+
+% set notes on or off depending on whether we passed 'notes' option to beamer or not
+\@ifclasswith{beamer}{notes}{\setbeameroption{show notes on second screen=right}}{\setbeameroption{hide notes}}
+
+% outlines before sections, and \notocsection to not use them
+\def\sectiontoc{1}
+
+\AtBeginSection{
+	\edef\skipframebookmark{1}
+	\ifnum\sectiontoc>0%
+		\frame{
+			\frametitle{Outline}
+			\tableofcontents[currentsection,hideothersections,sectionstyle=show/shaded]
+		}
+	\fi
+	\edef\skipframebookmark{0}
+}
+
+\newcommand{\notocsection}[1]{%
+	\edef\sectiontoc{0}
+	\@ifstar{\section*{#1}}{\section{#1}}
+	\edef\sectiontoc{1}
+}
+
+
+%adjust spaces around lists
+\def\@listi{\leftmargin\leftmargini
+			\topsep 0\p@ \@plus1\p@ \@minus2.5\p@
+			\parsep 0\p@
+			\itemsep1\p@ \@plus1\p@ \@minus3\p@}
+\let\@listI\@listi
+\def\@listii{\leftmargin\leftmarginii
+			  \topsep	1\p@ \@plus1\p@ \@minus2\p@
+			  \parsep	0\p@   \@plus\p@
+			  \itemsep   \parsep}
+\def\@listiii{\leftmargin\leftmarginiii
+			  \topsep	1\p@ \@plus1\p@ \@minus2\p@
+			  \parsep	0\p@   \@plus\p@
+			  \itemsep   \parsep}
+
+
+%% inspired from Jérôme Lelong (September 2007) -- +shifted frame numbers by 1
+%%
+%% this stuff fixes the frame numbering in beamer when using an appendix such
+%% that the slides of the appendix are not counted in the total framenumber
+
+\let\appendixtotalframenumber\empty
+\setcounter{framenumber}{-1}
+\def\mainend{-1}
+\let\appendixorig\appendix
+
+\def\appendix{
+	\edef\mainend{\theframenumber}
+	\immediate\write\@auxout{\string\global\string\@namedef{mainendframenumber}{\mainend}}
+	\appendixorig
+	\def\inserttotalframenumber{\appendixtotalframenumber}%
+	\setcounter{framenumber}{0}
+}
+
+\def\pageatend{
+	\edef\appendixend{\theframenumber}
+	\ifnum\mainend>0%
+		\immediate\write\@auxout{\string\global\string\@namedef{appendixtotalframenumber}{\appendixend}}%
+		\immediate\write\@auxout{\string\global\string\@namedef{inserttotalframenumber}{\mainend}}%
+		\immediate\write\@auxout{\string\@writefile{nav}{\noexpand\headcommand {\noexpand\def \noexpand\inserttotalframenumber{\mainend}}}}%
+		\immediate\write\@auxout{\string\@writefile{nav}{\noexpand\headcommand {\noexpand\def \noexpand\appendixtotalframenumber{\appendixend}}}}%
+	\else
+	\fi
+}
+
+\AtEndDocument{\pageatend}
+
+
