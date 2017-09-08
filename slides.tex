@@ -24,7 +24,6 @@
 % - 2 styles of pages for notes (toggled with 'notes' option to beamer), on top of "default" or "compressed" (available in tex distribution):
 %		+ "big_preview" to with current slide occupying 75% of notes page
 %		+ "simple" for minimalist notes with no slide preview
-\setbeamertemplate{note page}[simple]
 
 %% force notes on second screen / hiding the notes
 %\setbeameroption{show notes on second screen=right}
@@ -32,6 +31,7 @@
 
 %% uncomment a next line to use a theme for the notes page with a huge preview and less space for notes
 %\setbeamertemplate{note page}[big_preview]
+\setbeamertemplate{note page}[simple]
 
 \mode<handout>{
 	\setbeameroption{hide notes}
@@ -39,6 +39,10 @@
 	%alternatively, 2 slides per page:
 	%\pgfpagesuselayout{2 on 1}[a4paper,border shrink=5mm]
 }
+
+
+%% Depth of Table of Content (ToC) -- 1 is only sections, 2 adds subsections, etc.
+\setcounter{tocdepth}{1}
 
 
 % listings style (to display code)
@@ -110,22 +114,21 @@
 		Citations integrate with the footnotes between the logos.
 		\begin{itemize}
 			\item Add a .bib file: \\ \verb|\addbibresource{bib file}|
-			\item Predefined style example: \\ \verb|\cite{lamport2010}|
-			\item Full citation example: \\ \verb|\footfullcite{Lamport2010}|
-			\item Same only on slide 2 of the frame: \\ \verb|\footnote<2>{\fullcite{Lamport2010}}|
-			\item set predefined style (before loading theme): \\ \verb|\PassOptionsToPackage{style=authortitle}{biblatex}|
+			\item Set predefined style (before loading theme): \\ \verb|\PassOptionsToPackage{style=authortitle}{biblatex}|
+			\item To use predefined style: \\ \verb|\cite{lamport94}|
+			\item To put full citation in footnote\footfullcite{Lamport94}: \\ \verb|\footfullcite{Lamport94}|
+			\item Same only on slide 2 of the frame: \\ \verb|\footnote<2>{\fullcite{Lamport94}}|
 		\end{itemize}
 	\end{block}
 \end{frame}
 
-\section{Package}
-\subsection[make]{Makefile targets}
+\section{Makefile}
 
 \begin{frame}[fragile]
 	\frametitle[Makefile ft.]{Features in the Makefile}
 	\begin{block}{Targets}
 		\begin{itemize}
-			\item{\textbf{By default}:} makes slides for all .tex files in directory
+			\item{\textbf{by default}:} makes slides for all .tex files in directory
 			\item{\textbf{notes}:} makes slides with content of \verb|\notes{}| commands on second screen.\\ Try opening with pympress for example.
 			\item{\textbf{handout}:} 4 slides per page, no transitions
 			\item{\textbf{clean}:} removes all generated files except .pdf
@@ -135,13 +138,12 @@
 	\note{You won't see this in the normal presentation}
 \end{frame}
 
-\subsection[fig]{Figures}
-\begin{frame}[fragile]
+\begin{frame}
 	\frametitle{Figures}
-	\begin{block}{Automatically compile and make svg files}
+	\begin{block}{svg files}
 		\begin{itemize}
 			\item requires inkscape
-			\item Builds .pdf\_tex for every \verb|\includesvg|'d svg figure
+			\item Builds .pdf\_tex for every latex-text containing svg figure
 			\item Builds .pdf for every other svg figure
 		\end{itemize}
 	\end{block}
@@ -187,7 +189,7 @@
 \begin{frame}
 	\frametitle{This is a backup slide}
 	\begin{block}{It appears after the \texttt{\textbackslash appendix} command}
-		See how the bottom says ``Appx. B'' Instead of ``slide NN.N/NN''
+		See how the bottom says ``Appx. A'' Instead of ``slide NN.N/NN''
 	\end{block}
 \end{frame}
 
