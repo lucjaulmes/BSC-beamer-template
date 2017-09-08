@@ -180,12 +180,11 @@
 
 \addtobeamertemplate{title page}{\vskip3cm}{}
 
-% setup style of note pages
+\usepackage{pgfpages}
+
+% setup big_preview style of note pages
 % a 25% width column with meta-info, 75% sized preview of current slide
 % then the bottom 25% of the slide is reserved to print the actual notes
-\usepackage{pgfpages}
-\setbeamertemplate{note page}[default]
-
 \defbeamertemplate*{note page}{big_preview}
 {%
 	{%
@@ -259,6 +258,45 @@
 	}
 }
 
+% setup simple style of note pages, with just notes
+% setup style of note pages
+\defbeamertemplate*{note page}{simple}
+{%
+  {% titles presentation/section/subsection/frame
+    \scriptsize\usebeamerfont{note title}\usebeamercolor[fg]{note title}% title font
+    \ifbeamercolorempty[bg]{note title}{}{% title background
+      \insertvrule{.25\paperheight}{note title.bg}%
+      \vskip-.25\paperheight%
+      \nointerlineskip%
+    }%
+    \nointerlineskip
+    \vbox to .25\paperheight{\vskip0.5em % occupy 25% vertically
+      \hbox{\hskip-24pt\insertshorttitle}% title
+      \setbox\beamer@tempbox=\hbox{\insertsection}% tempbox to measure section
+      \hbox{\ifdim\wd\beamer@tempbox>1pt{\hskip-20pt\raise3pt% insert section if it exists
+			\hbox{\vrule width0.4pt height7pt\vrule width 9pt height0.4pt}}\hskip1pt%
+			\hbox{\def\breakhere{}\insertsection}%
+      \fi}%
+      \setbox\beamer@tempbox=\hbox{\insertsubsection}%
+      \hbox{\ifdim\wd\beamer@tempbox>1pt{\hskip-6.6pt\raise3pt%
+			\hbox{\vrule width0.4pt height7pt\vrule width 9pt height0.4pt}}\hskip1pt%
+			\hbox{\def\breakhere{}\insertsubsection}%
+      \fi}%
+      \setbox\beamer@tempbox=\hbox{\insertshortframetitle}%
+      \hbox{\ifdim\wd\beamer@tempbox>1pt{%
+		  \hskip6.8pt\raise3pt%
+		  \hbox{\vrule width0.4pt height7pt\vrule width 9pt height0.4pt}}\hskip1pt%
+		  \hbox{\insertshortframetitle}%
+      \fi}%
+      \vfil}%
+  }% small space and notes
+  \vskip.25em
+  \nointerlineskip
+  \insertnote
+}
+
+
+
 % force beamer notes into an itemize
 \renewcommand<>{\beamer@inframenote}[1]{%
 	\ifbeamer@inlecture%
@@ -288,7 +326,6 @@
 }
 
 
-
 \setbeamertemplate{itemize item}[circle]
 
 %\usepackage{enumitem}
@@ -299,7 +336,7 @@
 
 %adjust spaces around lists
 \def\@listi{\leftmargin\leftmargini
-			\topsep 0\p@
+			\topsep 0\p@ \@plus1\p@ \@minus2.5\p@
 			\parsep 0\p@
 			\itemsep1\p@ \@plus1\p@ \@minus3\p@}
 \let\@listI\@listi
@@ -311,8 +348,8 @@
 			  \topsep	1\p@ \@plus1\p@ \@minus2\p@
 			  \parsep	0\p@   \@plus\p@
 			  \itemsep   \parsep}
-\partopsep 0pt
 
+\partopsep 0pt
 
 % utilities for inkscape-generated pdf's from latex-enabled svg's
 % go over every item in graphicspath; break when file.pdf_tex is found

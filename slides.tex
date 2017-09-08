@@ -20,13 +20,14 @@
 % - bullets for {block}
 % - outlines at each section
 % - the \notocsection command, equivalent to \section without outline before
-% - style of pages if used (toggled with 'notes' option to beamer), with smaller (75%) current slide and notes (from \note{} commands) listed below
 % - \includesvg command, to replace \includegraphics for svg where the text needs to be parsed by LaTeX (e.g. $x$) -- use without .svg extension
+% - 2 styles of pages for notes (toggled with 'notes' option to beamer), on top of "default" or "compressed" (available in tex distribution):
+%		+ "big_preview" to with current slide occupying 75% of notes page
+%		+ "simple" for minimalist notes with no slide preview
+\setbeamertemplate{note page}[simple]
 
-%% uncomment next line and present with pympress to force notes on second screen (pympress will show time, etc)
+%% force notes on second screen / hiding the notes
 %\setbeameroption{show notes on second screen=right}
-
-%% uncomment next line and present with pympress to force hiding the notes
 %\setbeameroption{hide notes}
 
 %% uncomment a next line to use a theme for the notes page with a huge preview and less space for notes
@@ -38,9 +39,6 @@
 	%alternatively, 2 slides per page:
 	%\pgfpagesuselayout{2 on 1}[a4paper,border shrink=5mm]
 }
-
-% for a svg file that has latex text in it, use \includesvg[width]{svg_file_name} or \includesvg{svg_file_name} (without .svg extension)
-% otherwise just use includegraphics
 
 
 % listings style (to display code)
@@ -78,12 +76,15 @@
 		\end{itemize}
 	\end{block}
 	\pause
-	\begin{block}{New note page theme}
+	\begin{block}{New note page themes}
 		\begin{itemize}
-			\item A \verb|big_preview| theme for beamer's notes pages:
-		\end{itemize}
-		\note{Notes appear below the slide preview}
-			\fbox{\includegraphics[width=\linewidth]{big_notes}}
+			\item \verb|simple|, without slide preview
+			\item \verb|big_preview|, with 75\% of the notes being a preview:
+		\end{itemize}%
+		\note{Notes appear below the slide preview}%
+		\begin{center}
+			\fbox{\includegraphics[width=.82\linewidth]{big_notes}}
+		\end{center}
 	\end{block}
 \end{frame}
 
