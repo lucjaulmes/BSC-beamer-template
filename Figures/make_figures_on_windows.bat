@@ -1,41 +1,47 @@
 @echo off
 
 REM search for inkscape.exe in path
-for %%a in (inkscape.exe) do set prog=%%~$PATH:a
-if not "%prog%" == "" (
-	if exist "%prog%" goto :found
+for %%a in (inkscape.exe) do set prog="%%~$PATH:a"
+if not %prog% == "" (
+	if exist %prog% goto :found
+	set prog=
+) else (
+	echo Inkscape not in path...
 )
 
-REM try looking for the registry value
-echo Inkscape not in path...
-REM reg query for the app path (useback to "" key name), query default value of reg key (/ve)
-REM remove line that repeats reg key name
-REM which contain reg type etc. until REG_SZ, and keep the rest (actual path)
-for /f "useback tokens=*" %%a in (`REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\inkscape.exe" /ve ^| findstr /L /V HKEY_LOCAL_MACHINE`) do (
+REM try looking for the registry value, query for the default (/ve) path (useback enquotes key name)
+REM remove line that repeats reg key name and concatenate words of second line
+REM discard reg type etc. until REG_SZ, and keep the rest (actual path)
+setlocal EnableDelayedExpansion
 
-	setlocal EnableDelayedExpansion
-
+for /f "useback tokens=*" %%a in (
+	`reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\inkscape.exe"^
+	/ve ^| findstr /L /V HKEY_LOCAL_MACHINE`
+) do (
 	for %%b in (%%a) do (
 		if %%b == REG_SZ (
-			set prog=
+			set str=
 		) else (
-			set prog=!prog! %%b
+			set str=!str! %%b
 		)
 	)
-
-	setlocal DisableDelayedExpansion
-
-	REM our expansion caused an initial space, remove it
-	set prog=%prog:~1%
 )
-if not "%prog%" == "" (
-	if exist "%prog%" goto :found
+
+REM our expansion caused an initial space, remove it
+set prog="!str:~1!"
+
+setlocal DisableDelayedExpansion
+
+if not %prog% == "" (
+	if exist %prog% goto :found
+	set prog=
+) else (
+	echo Inkscape not found in registry...
 )
 
 REM last resort, try direct paths
-echo Inkscape not found in registry...
 
-for %%a in ("C:\Program Files (x86)\Inkscape\inkscape.exe" "C:\Program Files\Inkscape\inkscape.exe") do (
+for %%a in ("%ProgramFiles(x86)%\Inkscape\inkscape.exe" "%ProgramFiles%\Inkscape\inkscape.exe") do (
 	if exist %%a (
 		set prog=%%a
 		goto :found
@@ -57,26 +63,24 @@ pushd %~dp0
 
 setlocal EnableDelayedExpansion
 
-REM actual transformation of .svg in .pdf + .pdf_tex
+REM actual transformation of .svg in .pdf + .pdf_tex (if called with includesvg from a tex file) or to .pdf
 for %%A in (*.svg ..\beamertheme\*.svg) do (
 	pushd %%~dpA
 	echo %%~nA.pdf
-	
+
 	for /f %%i in ('dir /b /o:d "%%~nA.svg" "%%~nA.pdf"') do set B=%%i
 	if "%%~nxA"=="!B!" (
 		>nul findstr /R "\\includesvg.*{%%~nA}" ..\*.tex && (
-			"%prog%" -C -z --file="%%~nxA" --export-pdf="%%~nA.pdf" --export-latex
+			%prog% -C -z --file="%%~fA" --export-pdf="%%~dpnA.pdf" --export-latex
 		) || (
-			"%prog%" -C -z --file="%%~nxA" --export-pdf="%%~nA.pdf"
+			%prog% -C -z --file="%%~fA" --export-pdf="%%~dpnA.pdf"
 		)
 	)
-	
+
 	popd
 )
-
 setlocal DisableDelayedExpansion
 
 popd
 
 :eof
-

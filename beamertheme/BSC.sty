@@ -9,13 +9,15 @@
 \setbeamerfont{title}{size*={22}{20}}
 
 \usepackage{xcolor}
-\definecolor{darkred}{HTML}{CE0000}%
+\definecolor{darkred}{HTML}{CE0000}% ~ red!80!black
 % something like http://www.colorcombos.com/color-schemes/115/ColorCombo115.html ?
 
 \setbeamercolor{title}{bg=}
 \setbeamercolor{frametitle}{bg=}
 \setbeamercolor{title page}{fg=white}
 \setbeamercolor{block title alerted}{fg=darkred}
+\setbeamercolor{alerted text}{fg=darkred}
+\setbeamerfont{alerted text}{series=\bfseries}
 
 \usepackage[numbered]{bookmark}
 \usepackage{etoolbox}
@@ -71,8 +73,8 @@
 		\newlength\crop%
 		\setlength{\crop}{\ht\bg}%
 		\addtolength{\crop}{-\paperheight}%
-		\includegraphics[width=\paperwidth,keepaspectratio,clip,trim={0 0 0 {1\crop}}]{firstpage.jpg}
-		\bookmark[page=\the\c@page,level=1]{\beamer@shorttitle}
+		\includegraphics[width=\paperwidth,keepaspectratio,clip,trim={0 0 0 {1\crop}}]{firstpage.jpg}%
+		\bookmark[page=\the\c@page,level=1]{\beamer@shorttitle}%
 	\fi
 }
 
@@ -94,12 +96,12 @@
 
 \newlength\footlineextraspace
 \setlength{\footlineextraspace}{\paperwidth}
-\addtolength{\footlineextraspace}{-4em} % page numbering
+\addtolength{\footlineextraspace}{-2.8em} % page numbering
 \addtolength{\footlineextraspace}{-\wd\bsclogo}
 \addtolength{\footlineextraspace}{-\wd\romollogo}
 
 
-% redefine a box for footnotes
+% define a box for footnotes
 \newbox\mybeamerfootins
 
 \renewcommand<>\beamer@framefootnotetext[1]{%
@@ -160,21 +162,27 @@
 }
 
 
-\setbeamertemplate{block begin}{%
-	\vskip.75ex%
-	\begin{beamercolorbox}{block title}%
-	\includegraphics[height=0.3cm]{bullet.pdf}
-	\usebeamerfont*{block title}~\insertblocktitle%
+\setbeamertemplate{block begin}
+{%
+	\par\vskip\medskipamount%
+	\begin{beamercolorbox}[colsep*=.75ex]{block title}%
+		\includegraphics[height=0.3cm]{bullet.pdf}
+		\usebeamerfont*{block title}~\insertblocktitle%
 	\end{beamercolorbox}%
-	\vskip.5ex %
+	{\parskip0pt\par}%
+	\ifbeamercolorempty[bg]{block title}
+		{}
+		{\ifbeamercolorempty[bg]{block body}{}{\nointerlineskip\vskip-0.5pt}}%
 	\usebeamerfont{block body}%
-	\hspace*{0.05\linewidth}%
-	\begin{beamercolorbox}[wd=0.95\linewidth]{block body}%
+	\begin{beamercolorbox}[colsep*=.75ex,vmode]{block body}%
+		\ifbeamercolorempty[bg]{block body}{\vskip-.25ex}{\vskip-.75ex}\vbox{}%
 }
 
 \addtobeamertemplate{title page}{\vskip3cm}{}
 
-% show style of note pages
+% setup style of note pages
+% a 25% width column with meta-info, 75% sized preview of current slide
+% then the bottom 25% of the slide is reserved to print the actual notes
 \usepackage{pgfpages}
 \setbeamertemplate{note page}[default]
 
@@ -192,6 +200,7 @@
 		\hbox{%
 		\hskip-\Gm@rmargin\hskip 0.25\paperwidth%
 	\ifnum \insertframenumber=0%
+		% pretty much \insertslideintonotes{0.75} with the background image
 		\begin{pgfpicture}{0cm}{0cm}{0.75\paperwidth}{0.75\paperheight}%
 			\begin{pgflowlevelscope}{\pgftransformscale{0.75}}
 				{\pgftransformshift{\pgfpointorigin}\pgftext[left,bottom]{\includegraphics[width=\paperwidth,height=\paperheight]{firstpage.jpg}}}
@@ -200,6 +209,7 @@
 			\end{pgflowlevelscope}
 		\end{pgfpicture}%
 	\else%
+		% pretty much \insertslideintonotes{0.75} without the \color[gray]{0.8} background
 		\begin{pgfpicture}{0cm}{0cm}{0.75\paperwidth}{0.75\paperheight}%
 			\begin{pgflowlevelscope}{\pgftransformscale{0.75}}
 				\color{white}
@@ -249,7 +259,59 @@
 	}
 }
 
+% force beamer notes into an itemize
+\renewcommand<>{\beamer@inframenote}[1]{%
+	\ifbeamer@inlecture%
+		\only#2{%
+			\expandafter\gdef\expandafter\beamer@noteitems%
+				\expandafter{\beamer@noteitems\item#1}%
+		}%
+	\fi%
+}
+
+\def\beamer@setupnote{%
+	\gdef\beamer@notesactions{%
+		\beamer@outsideframenote{%
+			\beamer@atbeginnote%
+				\beamer@notes%
+				\ifx\beamer@noteitems\@empty\else%
+				\setbeamertemplate{itemize item}{-}%
+				\begin{itemize}
+					\leftmargin=0pt\leftmargini=0pt\itemindent=-2ex\labelsep=2pt\topsep=0pt\partopsep=0pt\parsep=0pt\parskip=0pt\itemsep=-0.5ex%
+					\beamer@noteitems%
+				\end{itemize}%
+				\fi%
+				\beamer@atendnote%
+		}%
+		\gdef\beamer@notesactions{}%
+	}
+}
+
+
+
 \setbeamertemplate{itemize item}[circle]
+
+%\usepackage{enumitem}
+%\setlist[itemize,1]{label={\color{block title alerted.fg}\textbullet}}
+%\setlist[itemize,1]{label={\color{block title example.fg}\textbullet}}
+%\setlist[itemize,1]{label={\color{block title.fg}\textbullet}}
+
+
+%adjust spaces around lists
+\def\@listi{\leftmargin\leftmargini
+			\topsep 0\p@
+			\parsep 0\p@
+			\itemsep1\p@ \@plus1\p@ \@minus3\p@}
+\let\@listI\@listi
+\def\@listii{\leftmargin\leftmarginii
+			  \topsep	1\p@ \@plus1\p@ \@minus2\p@
+			  \parsep	0\p@   \@plus\p@
+			  \itemsep   \parsep}
+\def\@listiii{\leftmargin\leftmarginiii
+			  \topsep	1\p@ \@plus1\p@ \@minus2\p@
+			  \parsep	0\p@   \@plus\p@
+			  \itemsep   \parsep}
+\partopsep 0pt
 
 
 % utilities for inkscape-generated pdf's from latex-enabled svg's
@@ -284,7 +346,7 @@
 	\ifnum\sectiontoc>0%
 		\frame{
 			\frametitle{Outline}
-			\tableofcontents[currentsection,hideothersections,sectionstyle=show/shaded]
+			\tableofcontents[currentsection,hideothersubsections,sectionstyle=show/shaded]
 		}
 	\fi
 	\edef\skipframebookmark{0}
@@ -295,22 +357,6 @@
 	\@ifstar{\section*{#1}}{\section{#1}}
 	\edef\sectiontoc{1}
 }
-
-
-%adjust spaces around lists
-\def\@listi{\leftmargin\leftmargini
-			\topsep 0\p@ \@plus1\p@ \@minus2.5\p@
-			\parsep 0\p@
-			\itemsep1\p@ \@plus1\p@ \@minus3\p@}
-\let\@listI\@listi
-\def\@listii{\leftmargin\leftmarginii
-			  \topsep	1\p@ \@plus1\p@ \@minus2\p@
-			  \parsep	0\p@   \@plus\p@
-			  \itemsep   \parsep}
-\def\@listiii{\leftmargin\leftmarginiii
-			  \topsep	1\p@ \@plus1\p@ \@minus2\p@
-			  \parsep	0\p@   \@plus\p@
-			  \itemsep   \parsep}
 
 
 %% inspired from Jérôme Lelong (September 2007) -- +shifted frame numbers by 1
