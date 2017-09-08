@@ -9,6 +9,10 @@
 \usepackage{graphics}
 
 
+% options for biblatex need to come before usetheme
+%\PassOptionsToPackage{style=authortitle}{biblatex}
+
+
 % All paths where you store your figures:
 \graphicspath{{beamertheme/}{Figures/}}
 
@@ -58,6 +62,10 @@
 	frame=trbl,
 	basicstyle=\ttfamily\footnotesize
 }
+
+
+% input of .bib file, needs to be after usetheme
+\addbibresource{refs.bib}
 
 
 \title[BSC styled beamer tutorial]{How to use the BSC theme for beamer}
