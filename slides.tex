@@ -1,4 +1,4 @@
-\documentclass[c,12pt]{beamer}
+\documentclass[aspectratio=169,c,12pt]{beamer}
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -84,20 +84,27 @@
 	\begin{block}{Slide themes}
 		\begin{itemize}
 			\item BSC look: first page, footer, header, bullets for blocks
+			\begin{itemize}
+				\item Also works for 16:9 aspect ratio
+			\end{itemize}
 			\item Outlines before each section
 		\end{itemize}
 	\end{block}
 	\pause
-	\begin{block}{New note page themes}
-		\begin{itemize}
-			\item \verb|simple|, without slide preview
-			\item \verb|big_preview|, with 75\% of the notes being a preview:
-		\end{itemize}%
-		\note{Notes appear below the slide preview}%
-		\begin{center}
-			\fbox{\includegraphics[width=.82\linewidth]{big_notes}}
-		\end{center}
-	\end{block}
+	\note{Notes appear below the slide preview}%
+	\begin{columns}[T]
+		\begin{column}{.4\linewidth}
+			\begin{block}{New note page themes}
+				\begin{itemize}
+					\item \verb|simple|, without slide preview
+					\item \verb|big_preview|, with 75\% of the notes being a preview:
+				\end{itemize}%
+			\end{block}
+		\end{column}
+		\begin{column}{.65\linewidth}
+			\fbox{\includegraphics[width=\textwidth]{big_notes}}
+		\end{column}
+	\end{columns}
 \end{frame}
 
 \begin{frame}[fragile]
