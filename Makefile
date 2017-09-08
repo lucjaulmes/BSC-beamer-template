@@ -50,7 +50,9 @@ notes:$(patsubst %.tex, %_notes.pdf, $(SRC))
 
 %.pdf_tex:%.svg
 	@inkscape -C -z --file=$< --export-pdf=$(@:.pdf_tex=.pdf) --export-latex
-	@sed -i 's/\(\\includegraphics\[width=\\[0-9a-z_\\]\+\),page=[0-9]*\]/\1]/g' $@ # fixes https://bugs.launchpad.net/ubuntu/+bug/1417470 in inkscape 0.91 since we don't use pages inside Figures
+	# fixes https://bugs.launchpad.net/ubuntu/+bug/1417470 in inkscape 0.91 since we don't use pages inside Figures
+	# works for up to 9 includegraphics in .pdf_tex
+	@sed -ir "/\\includegraphics\[width=[^,]+,page=[`pdfinfo $(@:.pdf_tex=.pdf) | sed -n 's/Pages: */1 + /p' | bc`-9]\]/d" $@
 
 %_handout.pdf %_notes.pdf %.pdf: %.tex $(SVG_TEX_FIGS) $(SVG_PLAIN_FIGS) $(BIB)
 	$(LATEX) -jobname=$(basename $@) $(call IN_FILE, $*.tex)
