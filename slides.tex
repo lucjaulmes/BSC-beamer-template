@@ -18,6 +18,7 @@
 
 
 % main theme -- slight hack in name, usetheme{foo} includes 'beamerthemefoo.sty'
+%\usetheme[pre2017]{/BSC}
 \usetheme{/BSC}
 % theme defines
 % - front page, frame headers and footers
@@ -86,6 +87,7 @@
 			\item BSC look: first page, footer, header, bullets for blocks
 			\begin{itemize}
 				\item Also works for 16:9 aspect ratio
+				\item Previous version (before 2017) with \verb|\usetheme[pre2017]{/BSC}|
 			\end{itemize}
 			\item Outlines before each section
 		\end{itemize}
@@ -119,6 +121,7 @@
 	\begin{block}{Extended commands}
 		\begin{itemize}
 			\item the \verb|\appendix| command now stops slide numbering
+			\item the \verb|\begin{divider}...\end{divider}| environment, to insert a divider frame
 		\end{itemize}
 	\end{block}
 \end{frame}
@@ -198,6 +201,11 @@
 	\end{block}
 \end{frame}
 
+\begin{divider}
+	\begin{block}{Thank you for your attention}
+		This is a divider frame
+	\end{block}
+\end{divider}
 
 \appendix
 

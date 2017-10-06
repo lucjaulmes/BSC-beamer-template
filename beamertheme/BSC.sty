@@ -1,26 +1,30 @@
 \ProvidesPackage{beamertheme/BSC}[16/05/2014]
 
+\newcommand\version2
+\DeclareOption{pre2017}{\renewcommand\version1}
+\ProcessOptions
+\typeout{Version is \version}
+
 \setbeamertemplate{navigation symbols}{}%remove navigation symbols
 \usecolortheme{whale}%use a blue base theme
 \usefonttheme{structurebold}
 
-\setbeamerfont{title page}{series=\bfseries}
-\setbeamerfont{frametitle}{size=\large}
-\setbeamerfont{title}{size*={22}{20}}
+\usepackage{lmodern}
 
 \usepackage{xcolor}
 \definecolor{darkred}{HTML}{CE0000}% ~ red!80!black
+\definecolor{BSCblue}{HTML}{004890}% in HSV: 210, 100, 56.5
 % something like http://www.colorcombos.com/color-schemes/115/ColorCombo115.html ?
 
 \setbeamercolor{title}{bg=}
 \setbeamercolor{frametitle}{bg=}
-\setbeamercolor{title page}{fg=white}
 \setbeamercolor{block title alerted}{fg=darkred}
 \setbeamercolor{alerted text}{fg=darkred}
 \setbeamerfont{alerted text}{series=\bfseries}
 
 \usepackage[numbered]{bookmark}
 \usepackage{etoolbox}
+
 \def\skipframebookmark{0}
 
 \patchcmd{\beamer@section}%
@@ -41,40 +45,130 @@
 	{}{\errmessage{failed to patch}}
 
 \setbeamertemplate{headline}{}
-\setbeamertemplate{frametitle}
-{%
-	\vskip-3pt%
-	\leavevmode%
-		\hbox{%
-			\begin{beamercolorbox}[wd=\paperwidth,ht=.08125\paperwidth,dp=0pt]{background}%
-				\includegraphics[width=\paperwidth,height=.08125\paperwidth]{header.pdf}%
-			\end{beamercolorbox}%
-		}\vskip-.08125\paperwidth%
-		\hbox{%
-			\begin{beamercolorbox}[wd=\paperwidth,ht=.08125\paperwidth,dp=0pt]{frametitle}%
-				\raggedright\hspace*{1em}%
-				\strut%
-				\insertframetitle%
-				\strut%
-				\vspace{0ex}%
-			\end{beamercolorbox}%
-		}%
+
+\ifnum\version=1
+	% frame title
+	\setbeamerfont{frametitle}{size=\large}
+	\setbeamertemplate{frametitle}
+	{%
+		\vskip-3pt%
+		\leavevmode%
+			\hbox{%
+				\begin{beamercolorbox}[wd=\paperwidth,ht=.08125\paperwidth,dp=0pt]{background}%
+					\includegraphics[width=\paperwidth,height=.08125\paperwidth]{header.pdf}%
+				\end{beamercolorbox}%
+			}\vskip-.08125\paperwidth%
+			\hbox{%
+				\begin{beamercolorbox}[wd=\paperwidth,ht=.08125\paperwidth,dp=0pt]{frametitle}%
+					\raggedright\hspace*{1em}%
+					\strut%
+					\insertframetitle%
+					\strut%
+					\vspace{0ex}%
+				\end{beamercolorbox}%
+			}%
+	}
+
+	% title page
+	\newcommand\frontpagebg{firstpage.jpg}
+	\addtobeamertemplate{title page}{\vskip3cm}{}
+
+	\setbeamerfont{title page}{series=\bfseries}
+	\setbeamerfont{title}{size*={22}{20}}
+	\setbeamercolor{title page}{fg=white}
+\else
+	% frame title
+	\setbeamertemplate{frametitle}[default][center]
+
+	\setbeamercolor{frametitle}{fg=BSCblue}
+	\setbeamerfont{frametitle}{series=\bfseries}
+
+	% title page
+	\newcommand\frontpagebg{firstpage_v2.jpg}
+	\setbeamercolor{title page}{bg=white}
+
+	\setbeamercolor{title page}{fg=black}
+	\setbeamercolor{title}{fg=BSCblue}
+	\setbeamerfont{title}{series=\bfseries}
+	\setbeamerfont{title}{size*={24}{30}}
+	\setbeamerfont{author}{series=\bfseries}
+
+	\setbeamertemplate{title page}{
+		\begingroup
+		\vskip1em%
+		\begin{columns}
+			\column{0.45\paperwidth}\mbox{}
+			\typeout{Height of logos is .05\the\paperwidth}
+			\column{0.50\paperwidth}\centering\hbox{\hfill\includegraphics[keepaspectratio,height=2.5em]{bsc_logo.pdf}%
+												\hskip1em\includegraphics[keepaspectratio,height=2.5em]{so_logo.pdf}\hfill}%
+			\column{0.05\paperwidth}\mbox{}
+		\end{columns}
+		\vskip2em%
+		\begin{columns}
+			\column{0.45\paperwidth}\mbox{}
+			\column{0.55\paperwidth}
+				\begin{beamercolorbox}[sep=8pt,colsep=-4bp,wd=0.5\paperwidth]{title}
+					\usebeamerfont{title}\inserttitle\par%
+					\ifx\insertsubtitle\@empty\else%
+						\vskip0.25em
+						{\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+					\fi%
+				\end{beamercolorbox}%
+				\vskip2em\par
+				\begin{beamercolorbox}[sep=8pt,colsep=-4bp,wd=0.5\paperwidth]{author}
+					\usebeamerfont{author}\insertauthor
+				\end{beamercolorbox}
+				\ifx\insertinstitute\@empty\else%
+					\begin{beamercolorbox}[sep=8pt,colsep=-4bp,wd=0.5\paperwidth]{institute}
+						\usebeamerfont{institute}\insertinstitute
+					\end{beamercolorbox}
+				\fi%
+				\ifx\insertdate\@empty\else%
+					\begin{beamercolorbox}[sep=8pt,colsep=-4bp,wd=0.5\paperwidth]{date}
+						\usebeamerfont{date}\insertdate
+					\end{beamercolorbox}
+				\fi%
+				\ifx\inserttitlegraphic\@empty\else%
+					{\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
+				\fi%
+		\end{columns}
+	  \endgroup
+	}
+
+	\setbeamercolor{block title}{fg=BSCblue}
+	\setbeamercolor{section in toc}{fg=BSCblue}
+	\setbeamercolor{subsection in toc}{fg=BSCblue}
+	\setbeamertemplate{section in toc shaded}[default][65]
+	\setbeamerfont{section in toc}{size*={16}{18}}
+	\setbeamerfont{subsection in toc}{size*={16}{18}}
+\fi
+
+
+\newbox\bgh%
+\newbox\bgw%
+\newlength\fullheightwidth%
+\newlength\fullwidthheight%
+
+\newcommand{\clippedfullsize}[1]{%
+	% Make full height, remember how much we should crop width
+	\setbox\bgh=\hbox{{\includegraphics[keepaspectratio,clip=false,draft=true,height=\paperheight]{#1}}}%
+	\setlength{\fullheightwidth}{\wd\bgh}%
+	% Make full width, remember how much we should crop height
+	\setbox\bgw=\vbox{{\includegraphics[keepaspectratio,clip=false,draft=true,width=\paperwidth]{#1}}}%
+	\setlength{\fullwidthheight}{\ht\bgw}%
+	% Trim the dimension that overflows, align with bottom or right. Order of trim is: Left Bottom Right Top
+	\ifnum\fullheightwidth>\paperwidth%
+		\addtolength{\fullheightwidth}{-\paperwidth}%
+		\includegraphics[height=\paperheight,keepaspectratio,clip,trim={{\fullheightwidth} 0 0 0}]{#1}%
+	\else%
+		\addtolength{\fullwidthheight}{-\paperheight}%
+		\includegraphics[width=\paperwidth,keepaspectratio,clip,trim={0 0 0 {\fullwidthheight}}]{#1}%
+	\fi%
 }
 
-
 \setbeamertemplate{background canvas}{
-	\ifnum \insertframenumber=0%
-		%%% this adjusts the crop top so the image is bottom aligned
-		\newbox\bg%
-		\setbox\bg=\vbox{\begingroup%
-			\includegraphics[width=\paperwidth,keepaspectratio,clip=false]{firstpage.jpg}%
-			\endgroup%
-		}%
-		\newlength\crop%
-		\setlength{\crop}{\ht\bg}%
-		\addtolength{\crop}{-\paperheight}%
-		\includegraphics[width=\paperwidth,keepaspectratio,clip,trim={0 0 0 {1\crop}}]{firstpage.jpg}%
-		\bookmark[page=\the\c@page,level=1]{\beamer@shorttitle}%
+	\ifnum\insertframenumber=0%
+		\clippedfullsize{\frontpagebg}%
 	\fi
 }
 
@@ -142,12 +236,12 @@
 	\ifnum \insertframenumber=0%
 	\else \leavevmode \hbox{%
 		\begin{beamercolorbox}[ht=0.8cm,dp=0.1cm,wd=\paperwidth]{}
-			\usebox{\bsclogo}
+			\usebox{\bsclogo}%
 			\hfill%
 			\hbox{\parbox[t]{\footlineextraspace}{\hbox{\usebox{\mybeamerfootins}}}}%
 			\global\setbox\mybeamerfootins=\box\voidb@x%
 			\hfill%
-			\usebox{\romollogo}
+			\usebox{\romollogo}%
 			\ifnum\mainend>0% appendix page numbering
 				\hbox to 3em{Appx.~\Alph{framenumber}}%
 				\hbox to 1em{}%
@@ -157,7 +251,7 @@
 				\addtocounter{slidenumber}{1}%
 				\hbox to 4em{\insertframenumber.\arabic{slidenumber}/\inserttotalframenumber}%
 			\fi %
-		\end{beamercolorbox}
+		\end{beamercolorbox}%
 	} \fi%
 }
 
@@ -178,7 +272,27 @@
 		\ifbeamercolorempty[bg]{block body}{\vskip-.25ex}{\vskip-.75ex}\vbox{}%
 }
 
-\addtobeamertemplate{title page}{\vskip3cm}{}
+
+\newenvironment{divider}{
+	\begingroup
+	\ifnum\version=2 \usebackgroundtemplate{\clippedfullsize{divider.jpg}}\fi
+	\setbeamertemplate{footline}{\begin{beamercolorbox}[ht=0.8cm,dp=0.1cm,wd=.95\paperwidth]{}
+		\usebox{\bsclogo}\hfill\usebox{\romollogo}
+	\end{beamercolorbox}}
+	\setbeamertemplate{block begin}{%
+		\begin{beamercolorbox}[colsep*=.75ex]{block title} \centering \usebeamerfont*{block title}~\insertblocktitle \end{beamercolorbox}%
+		\usebeamerfont{block body} \vskip1em \begin{beamercolorbox}[colsep*=.75ex,vmode]{block body} \centering%
+	}
+	\setbeamercolor{block title}{fg=BSCblue}
+	\setbeamerfont{block title}{series=\bfseries}
+	\setbeamerfont{block title}{size*={24}{30}}
+	\setbeamerfont{block body}{size*={20}{22}}
+	\begin{frame}
+	\frametitle{}
+}{
+	\end{frame}
+	\endgroup
+}
 
 \usepackage{pgfpages}
 
@@ -200,11 +314,13 @@
 		\vbox{%
 		\hbox{%
 		\hskip-\Gm@rmargin\hskip 0.25\paperwidth%
+	% pretty much \insertslideintonotes{0.75} with the background image
 	\ifnum \insertframenumber=0%
-		% pretty much \insertslideintonotes{0.75} with the background image
+		\newbox\bg%
+		\newlength\bgcrop%
 		\begin{pgfpicture}{0cm}{0cm}{0.75\paperwidth}{0.75\paperheight}%
 			\begin{pgflowlevelscope}{\pgftransformscale{0.75}}
-				{\pgftransformshift{\pgfpointorigin}\pgftext[left,bottom]{\includegraphics[width=\paperwidth,height=\paperheight]{firstpage.jpg}}}
+				{\pgftransformshift{\pgfpointorigin}\pgftext[left,bottom]\expand\clippedfullsize{\frontpagebg}}
 				\color{normal text.fg}
 				{\pgftransformshift{\pgfpoint{\beamer@origlmargin}{\footheight}}\pgftext[left,bottom]{\copy\beamer@frameboxcopy}}
 			\end{pgflowlevelscope}
@@ -379,10 +495,13 @@
 \AtBeginSection{
 	\edef\skipframebookmark{1}
 	\ifnum\sectiontoc>0%
+	{
+		\ifnum\version=2 \usebackgroundtemplate{\clippedfullsize{divider.jpg}}\fi%
 		\frame{
 			\frametitle{Outline}
 			\tableofcontents[currentsection,hideothersubsections,sectionstyle=show/shaded]
 		}
+	}
 	\fi
 	\edef\skipframebookmark{0}
 }
