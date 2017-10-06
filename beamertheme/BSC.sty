@@ -192,7 +192,9 @@
 		\insertvrule{.75\paperheight}{white!90!black}
 		\nointerlineskip
 		\insertvrule{0.4pt}{black}
-		\vskip-.75\paperheight
+		\nointerlineskip
+		\insertvrule{.25\paperheight}{white}
+		\vskip-\paperheight
 		\vskip-0.4pt
 		\nointerlineskip
 		\vbox{%
@@ -229,14 +231,12 @@
 		\vbox to .75\paperheight{\vskip0.5em
 		\vbox{\small\textbf{\insertshorttitle[width=.25\paperwidth]}}%
 		%
-		\setbox\beamer@tempbox=\hbox{\insertsection}%
-		\vbox{\ifdim\wd\beamer@tempbox>1pt
+		\vbox{\ifx\insertsection\@empty\else%
 			\vbox{\vskip0.25em\hskip0.025\paperwidth\vrule width .20\paperwidth height0.4pt\vskip0.25em}%
 			\vbox{\begin{minipage}[t]{.25\paperwidth}\centering\footnotesize\insertsection\end{minipage}}
 		\fi}%
 		%
-		\setbox\beamer@tempbox=\hbox{\insertsubsection}%
-		\vbox{\ifdim\wd\beamer@tempbox>1pt
+		\vbox{\ifx\insertsubsection\@empty\else%
 			\vbox{\hskip0.025\paperwidth\vrule width .20\paperwidth height0.4pt}
 			\begin{minipage}[t]{.25\paperwidth}\centering\insertsubsection\end{minipage}%
 		\fi}%
@@ -266,29 +266,27 @@
     \scriptsize\usebeamerfont{note title}\usebeamercolor[fg]{note title}% title font
     \ifbeamercolorempty[bg]{note title}{}{% title background
       \insertvrule{.25\paperheight}{note title.bg}%
-      \vskip-.25\paperheight%
+      \nointerlineskip%
+      \insertvrule{.75\paperheight}{note page.bg}%
+      \vskip-\paperheight%
       \nointerlineskip%
     }%
     \nointerlineskip
     \vbox to .25\paperheight{\vskip0.5em % occupy 25% vertically
       \hbox{\hskip-24pt\insertshorttitle}% title
-      \setbox\beamer@tempbox=\hbox{\insertsection}% tempbox to measure section
-      \hbox{\ifdim\wd\beamer@tempbox>1pt{\hskip-20pt\raise3pt% insert section if it exists
-			\hbox{\vrule width0.4pt height7pt\vrule width 9pt height0.4pt}}\hskip1pt%
+	  \ifx\insertsection\@empty\else\hbox{\hskip-20pt\raise3pt% insert section if it exists
+			\hbox{\vrule width0.4pt height7pt\vrule width 9pt height0.4pt}\hskip1pt%
 			\hbox{\def\breakhere{}\insertsection}%
-      \fi}%
-      \setbox\beamer@tempbox=\hbox{\insertsubsection}%
-      \hbox{\ifdim\wd\beamer@tempbox>1pt{\hskip-6.6pt\raise3pt%
-			\hbox{\vrule width0.4pt height7pt\vrule width 9pt height0.4pt}}\hskip1pt%
+      }\fi%
+	  \ifx\insertsubsection\@empty\else\\hbox{hskip-6.6pt\raise3pt%
+			\hbox{\vrule width0.4pt height7pt\vrule width 9pt height0.4pt}\hskip1pt%
 			\hbox{\def\breakhere{}\insertsubsection}%
-      \fi}%
-      \setbox\beamer@tempbox=\hbox{\insertshortframetitle}%
-      \hbox{\ifdim\wd\beamer@tempbox>1pt{%
-		  \hskip6.8pt\raise3pt%
-		  \hbox{\vrule width0.4pt height7pt\vrule width 9pt height0.4pt}}\hskip1pt%
+      }\fi%
+	  \ifx\insertshortframetitle\@empty\else\hbox{\hskip6.8pt\raise3pt%
+		  \hbox{\vrule width0.4pt height7pt\vrule width 9pt height0.4pt}\hskip1pt%
 		  \hbox{\insertshortframetitle}%
-      \fi}%
-      \vfil}%
+      }\fi%
+      \vfill}%
   }% small space and notes
   \vskip.25em
   \nointerlineskip
