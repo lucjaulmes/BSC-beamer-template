@@ -253,6 +253,11 @@
 \setbeamerfont{footnote}{size=\scriptsize}
 \setbeamerfont{footnote mark}{size=\tiny}
 
+% newer versions of beamer (3.49+) use mainframenumber for the total
+% of non-appendix frames. Here we provide the command for older
+% versions of the class
+\providecommand\insertmainframenumber{\inserttotalframenumber}
+
 \setbeamertemplate{footline}
 {%
 	\nointerlineskip%
@@ -272,7 +277,7 @@
 				\setcounter{slidenumber}{\insertpagenumber}%
 				\addtocounter{slidenumber}{-\insertframestartpage}%
 				\addtocounter{slidenumber}{1}%
-				\hbox to 4em{\insertframenumber.\arabic{slidenumber}/\inserttotalframenumber}%
+				\hbox to 4em{\insertframenumber.\arabic{slidenumber}/\insertmainframenumber}%
 			\fi %
 		\end{beamercolorbox}%
 	} \fi%
