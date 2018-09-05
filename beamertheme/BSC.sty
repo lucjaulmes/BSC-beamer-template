@@ -1,4 +1,4 @@
-\ProvidesPackage{beamertheme/BSC}[16/05/2014]
+\ProvidesPackage{beamertheme/BSC}[2018/05/18]
 
 \newcommand\version2
 \DeclareOption{pre2017}{\renewcommand\version1}
@@ -22,6 +22,10 @@
 \setbeamercolor{alerted text}{fg=darkred}
 \setbeamerfont{alerted text}{series=\bfseries}
 
+\hypersetup{%
+  bookmarksnumbered=true,%
+}
+
 \usepackage[numbered]{bookmark}
 \usepackage{etoolbox}
 
@@ -31,14 +35,33 @@
 	{\Hy@writebookmark{\the\c@section}{\secname}}%
 	{\Hy@writebookmark{\the\c@section}{\numberline{\thesection}\secname}}%
 	{}{\errmessage{failed to patch}}
-\patchcmd{\beamer@subsection}%
-	{\Hy@writebookmark{\the\c@subsection}{#2}}%
-	{\Hy@writebookmark{\the\c@subsection}{\numberline{\thesection.\thesubsection}#2}}%
-	{}{\errmessage{failed to patch}}
-\patchcmd{\beamer@subsubsection}%
-	{\Hy@writebookmark{\the\c@subsubsection}{#2}}%
-	{\Hy@writebookmark{\the\c@subsubsection}{\numberline{\thesection.\thesubsection.\thesubsubsection}#2}}%
-	{}{\errmessage{failed to patch}}
+
+% From beamer v3.44 (2017/11/10) the handling of bookmarks is normalised.
+% Need to do it this way because argument numbers (like #2) do not work
+% inside braced expressions and \patchcmd fails
+\newif\if@BSC@new@beamer
+\@BSC@new@beamerfalse
+\@ifclasslater{beamer}{2017/11/10}{\@BSC@new@beamertrue}{\@BSC@new@beamerfalse}
+
+\if@BSC@new@beamer
+	\patchcmd{\beamer@subsection}%
+		{\Hy@writebookmark{\the\c@subsection}{\subsecname}}%
+		{\Hy@writebookmark{\the\c@subsection}{\numberline{\thesection.\thesubsection}\subsecname}}%
+		{}{\errmessage{failed to patch}}
+	\patchcmd{\beamer@subsubsection}%
+		{\Hy@writebookmark{\the\c@subsubsection}{\subsubsecname}}%
+		{\Hy@writebookmark{\the\c@subsubsection}{\numberline{\thesection.\thesubsection.\thesubsubsection}\subsubsecname}}%
+		{}{\errmessage{failed to patch}}
+\else
+	\patchcmd{\beamer@subsection}%
+		{\Hy@writebookmark{\the\c@subsection}{#2}}%
+		{\Hy@writebookmark{\the\c@subsection}{\numberline{\thesection.\thesubsection}#2}}%
+		{}{\errmessage{failed to patch}}
+	\patchcmd{\beamer@subsubsection}%
+		{\Hy@writebookmark{\the\c@subsubsection}{#2}}%
+		{\Hy@writebookmark{\the\c@subsubsection}{\numberline{\thesection.\thesubsection.\thesubsubsection}#2}}%
+		{}{\errmessage{failed to patch}}
+\fi
 
 \apptocmd{\beamer@@frametitle}%
 	{\ifnum\skipframebookmark=0\only<1>{\bookmark[page=\the\c@page,level=4]{#2}}\fi}%
@@ -230,6 +253,11 @@
 \setbeamerfont{footnote}{size=\scriptsize}
 \setbeamerfont{footnote mark}{size=\tiny}
 
+% newer versions of beamer (3.49+) use mainframenumber for the total
+% of non-appendix frames. Here we provide the command for older
+% versions of the class
+\providecommand\insertmainframenumber{\inserttotalframenumber}
+
 \setbeamertemplate{footline}
 {%
 	\nointerlineskip%
@@ -249,7 +277,7 @@
 				\setcounter{slidenumber}{\insertpagenumber}%
 				\addtocounter{slidenumber}{-\insertframestartpage}%
 				\addtocounter{slidenumber}{1}%
-				\hbox to 4em{\insertframenumber.\arabic{slidenumber}/\inserttotalframenumber}%
+				\hbox to 4em{\insertframenumber.\arabic{slidenumber}/\insertmainframenumber}%
 			\fi %
 		\end{beamercolorbox}%
 	} \fi%
