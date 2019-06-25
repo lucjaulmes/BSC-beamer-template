@@ -22,47 +22,12 @@
 \setbeamercolor{alerted text}{fg=darkred}
 \setbeamerfont{alerted text}{series=\bfseries}
 
-\hypersetup{%
-  bookmarksnumbered=true,%
-}
-
 \usepackage[numbered]{bookmark}
 \usepackage{etoolbox}
 
+% Maually add bookmarks to each slide's first page. Levels:
+% 0 = chapters, 1 = sections, 2 = subsections, 3 = subsubsections, 4 = slides.
 \def\skipframebookmark{0}
-
-\patchcmd{\beamer@section}%
-	{\Hy@writebookmark{\the\c@section}{\secname}}%
-	{\Hy@writebookmark{\the\c@section}{\numberline{\thesection}\secname}}%
-	{}{\errmessage{failed to patch}}
-
-% From beamer v3.44 (2017/11/10) the handling of bookmarks is normalised.
-% Need to do it this way because argument numbers (like #2) do not work
-% inside braced expressions and \patchcmd fails
-\newif\if@BSC@new@beamer
-\@BSC@new@beamerfalse
-\@ifclasslater{beamer}{2017/11/10}{\@BSC@new@beamertrue}{\@BSC@new@beamerfalse}
-
-\if@BSC@new@beamer
-	\patchcmd{\beamer@subsection}%
-		{\Hy@writebookmark{\the\c@subsection}{\subsecname}}%
-		{\Hy@writebookmark{\the\c@subsection}{\numberline{\thesection.\thesubsection}\subsecname}}%
-		{}{\errmessage{failed to patch}}
-	\patchcmd{\beamer@subsubsection}%
-		{\Hy@writebookmark{\the\c@subsubsection}{\subsubsecname}}%
-		{\Hy@writebookmark{\the\c@subsubsection}{\numberline{\thesection.\thesubsection.\thesubsubsection}\subsubsecname}}%
-		{}{\errmessage{failed to patch}}
-\else
-	\patchcmd{\beamer@subsection}%
-		{\Hy@writebookmark{\the\c@subsection}{#2}}%
-		{\Hy@writebookmark{\the\c@subsection}{\numberline{\thesection.\thesubsection}#2}}%
-		{}{\errmessage{failed to patch}}
-	\patchcmd{\beamer@subsubsection}%
-		{\Hy@writebookmark{\the\c@subsubsection}{#2}}%
-		{\Hy@writebookmark{\the\c@subsubsection}{\numberline{\thesection.\thesubsection.\thesubsubsection}#2}}%
-		{}{\errmessage{failed to patch}}
-\fi
-
 \apptocmd{\beamer@@frametitle}%
 	{\ifnum\skipframebookmark=0\only<1>{\bookmark[page=\the\c@page,level=4]{#2}}\fi}%
 	{}{\errmessage{failed to patch}}
@@ -203,8 +168,6 @@
 \def\frame{\global\setbox\mybeamerfootins=\box\voidb@x\beamer@original@frame}
 
 
-\newcounter{slidenumber}
-
 \newbox\bsclogo
 \setbox\bsclogo=\hbox{\hspace{0.1cm}\includegraphics[height=0.7cm]{bsc_logo.pdf}}%
 
@@ -213,6 +176,7 @@
 
 \newlength\footlineextraspace
 \setlength{\footlineextraspace}{\paperwidth}
+%\addtolength{\footlineextraspace}{-1.5em} % page numbering
 \addtolength{\footlineextraspace}{-2.8em} % page numbering
 \addtolength{\footlineextraspace}{-\wd\bsclogo}
 \addtolength{\footlineextraspace}{-\wd\romollogo}
@@ -248,15 +212,11 @@
 		\color@endgroup}}
 
 \let\@footnotetext=\beamer@framefootnotetext
+\renewcommand\thempfootnote{\arabic{mpfootnote}}
 
 % some footnote styling
 \setbeamerfont{footnote}{size=\scriptsize}
 \setbeamerfont{footnote mark}{size=\tiny}
-
-% newer versions of beamer (3.49+) use mainframenumber for the total
-% of non-appendix frames. Here we provide the command for older
-% versions of the class
-\providecommand\insertmainframenumber{\inserttotalframenumber}
 
 \setbeamertemplate{footline}
 {%
@@ -271,14 +231,11 @@
 			\hfill%
 			\usebox{\romollogo}%
 			\ifnum\mainend>0% appendix page numbering
-				\hbox to 3em{Appx.~\Alph{framenumber}}%
-				\hbox to 1em{}%
-			\else % page number frame.sub-slide / total frames
-				\setcounter{slidenumber}{\insertpagenumber}%
-				\addtocounter{slidenumber}{-\insertframestartpage}%
-				\addtocounter{slidenumber}{1}%
-				\hbox to 4em{\insertframenumber.\arabic{slidenumber}/\insertmainframenumber}%
-			\fi %
+				\thispdfpagelabel{\Alph{framenumber}}% make page label also Alph
+				\hbox to 4em{~Appx.~\Alph{framenumber}~}%
+			\else % page number frame / total frames
+				\hbox to 4em{~\insertframenumber/\insertmainframenumber~}%
+			\fi%
 		\end{beamercolorbox}%
 	} \fi%
 }
@@ -541,35 +498,13 @@
 }
 
 
-%% inspired from Jérôme Lelong (September 2007) -- +shifted frame numbers by 1
-%%
-%% this stuff fixes the frame numbering in beamer when using an appendix such
-%% that the slides of the appendix are not counted in the total framenumber
-
-\let\appendixtotalframenumber\empty
+%% Just a macro so we can know whenever we are in the appendix
 \setcounter{framenumber}{-1}
 \def\mainend{-1}
 \let\appendixorig\appendix
 
 \def\appendix{
 	\edef\mainend{\theframenumber}
-	\immediate\write\@auxout{\string\global\string\@namedef{mainendframenumber}{\mainend}}
 	\appendixorig
-	\def\inserttotalframenumber{\appendixtotalframenumber}%
 	\setcounter{framenumber}{0}
 }
-
-\def\pageatend{
-	\edef\appendixend{\theframenumber}
-	\ifnum\mainend>0%
-		\immediate\write\@auxout{\string\global\string\@namedef{appendixtotalframenumber}{\appendixend}}%
-		\immediate\write\@auxout{\string\global\string\@namedef{inserttotalframenumber}{\mainend}}%
-		\immediate\write\@auxout{\string\@writefile{nav}{\noexpand\headcommand {\noexpand\def \noexpand\inserttotalframenumber{\mainend}}}}%
-		\immediate\write\@auxout{\string\@writefile{nav}{\noexpand\headcommand {\noexpand\def \noexpand\appendixtotalframenumber{\appendixend}}}}%
-	\else
-	\fi
-}
-
-\AtEndDocument{\pageatend}
-
-
