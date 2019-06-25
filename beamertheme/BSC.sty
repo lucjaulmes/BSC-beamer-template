@@ -1,4 +1,4 @@
-\ProvidesPackage{beamertheme/BSC}[2018/05/18]
+\ProvidesPackage{beamertheme/BSC}[2019/06/25]
 
 \newcommand\version2
 \DeclareOption{pre2017}{\renewcommand\version1}
@@ -66,7 +66,11 @@
 	\setbeamercolor{title page}{fg=white}
 \else
 	% frame title
-	\setbeamertemplate{frametitle}[default][center]
+	\setbeamertemplate{frametitle}{\vskip 3pt\leavevmode\hbox{%
+	    \begin{beamercolorbox}[wd=\paperwidth]{frametitle}%
+			\centering\strut\insertframetitle\strut%
+	    \end{beamercolorbox}%
+	}}
 
 	\setbeamercolor{frametitle}{fg=BSCblue}
 	\setbeamerfont{frametitle}{series=\bfseries}
@@ -87,8 +91,8 @@
 		\begin{columns}
 			\column{0.45\paperwidth}\mbox{}
 			\typeout{Height of logos is .05\the\paperwidth}
-			\column{0.50\paperwidth}\centering\hbox{\hfill\includegraphics[keepaspectratio,height=2.5em]{bsc_logo.pdf}%
-												\hskip1em\includegraphics[keepaspectratio,height=2.5em]{so_logo.pdf}\hfill}%
+			\column{0.50\paperwidth}\centering\hbox{\hfill\includegraphics[keepaspectratio,height=2.3em]{bsc_logo.pdf}%
+												\hskip.8em\includegraphics[keepaspectratio,height=2.3em]{logo_UPC.pdf}\hfill}%
 			\column{0.05\paperwidth}\mbox{}
 		\end{columns}
 		\vskip2em%
@@ -160,7 +164,7 @@
 	\fi
 }
 
-\usepackage[backend=bibtex]{biblatex}
+\usepackage{biblatex}
 
 
 % patch frame to reset footlinebox
@@ -254,6 +258,40 @@
 		{\ifbeamercolorempty[bg]{block body}{}{\nointerlineskip\vskip-0.5pt}}%
 	\usebeamerfont{block body}%
 	\begin{beamercolorbox}[colsep*=.75ex,vmode]{block body}%
+		\ifbeamercolorempty[bg]{block body}{\vskip-.25ex}{\vskip-.75ex}\vbox{}%
+}
+
+
+\setbeamertemplate{block example begin}
+{%
+	\par\vskip\medskipamount%
+	\begin{beamercolorbox}[colsep*=.75ex]{block title example}%
+		\includegraphics[height=0.3cm]{examplebullet.pdf}
+		\usebeamerfont*{block title}~\insertblocktitle%
+	\end{beamercolorbox}%
+	{\parskip0pt\par}%
+	\ifbeamercolorempty[bg]{block title example}
+		{}
+		{\ifbeamercolorempty[bg]{block body example}{}{\nointerlineskip\vskip-0.5pt}}%
+	\usebeamerfont{block body}%
+	\begin{beamercolorbox}[colsep*=.75ex,vmode]{block body example}%
+		\ifbeamercolorempty[bg]{block body}{\vskip-.25ex}{\vskip-.75ex}\vbox{}%
+}
+
+
+\setbeamertemplate{block alerted begin}
+{%
+	\par\vskip\medskipamount%
+	\begin{beamercolorbox}[colsep*=.75ex]{block title alerted}%
+		\includegraphics[height=0.3cm]{alertbullet.pdf}
+		\usebeamerfont*{block title}~\insertblocktitle%
+	\end{beamercolorbox}%
+	{\parskip0pt\par}%
+	\ifbeamercolorempty[bg]{block title alerted}
+		{}
+		{\ifbeamercolorempty[bg]{block body alerted}{}{\nointerlineskip\vskip-0.5pt}}%
+	\usebeamerfont{block body}%
+	\begin{beamercolorbox}[colsep*=.75ex,vmode]{block body alerted}%
 		\ifbeamercolorempty[bg]{block body}{\vskip-.25ex}{\vskip-.75ex}\vbox{}%
 }
 
@@ -479,9 +517,10 @@
 
 \AtBeginSection{
 	\edef\skipframebookmark{1}
+	\bookmark[page=\the\c@page,level=1]{\thesection. \secname}
 	\ifnum\sectiontoc>0%
 	{
-		\ifnum\version=2 \usebackgroundtemplate{\clippedfullsize{divider.jpg}}\fi%
+		\ifnum\version=2\usebackgroundtemplate{\clippedfullsize{divider.jpg}}\fi%
 		\frame{
 			\frametitle{Outline}
 			\tableofcontents[currentsection,hideothersubsections,sectionstyle=show/shaded]
