@@ -66,7 +66,7 @@ notes:$(patsubst %.tex, %_notes.pdf, $(SRC))
 
 
 # cleanup
-EXTS=.log .bbl .blg .nls .nlo .lof .lot .ilg .out .toc .aux .snm .vrb .nav .bcf -blx.bib .run.xml
+EXTS=.log .bbl .blg .nls .nlo .lof .lot .ilg .out .toc .aux .snm .vrb .nav .bcf -blx.bib .run.xml .upa
 allclean:EXTS+=pdf pdf_tex
 
 allclean:clean
