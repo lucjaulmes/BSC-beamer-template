@@ -44,15 +44,26 @@ notes:NOTES=1
 notes:$(patsubst %.tex, %_notes.pdf, $(SRC))
 	@echo done building $^
 
+# Handle different command-line arguments based on inkscape version (< 0.92.x)
+INKSCAPE_CLI:=$(shell inkscape --version 2>&1 | grep -sqE 'Inkscape +0\.(9[10]|[0-8][0-9])(\.[0-9]+)?\b' && echo old || echo new)
+
 #actual targets
 %.pdf:%.svg
-	@inkscape -C -z --file=$< --export-pdf=$@
+ifeq ($(INKSCAPE_CLI),old)
+	inkscape -C -z --file=$< --export-pdf=$@
+else
+	inkscape -C -o $@ $<
+endif
 
 %.pdf_tex:%.svg
-	@inkscape -C -z --file=$< --export-pdf=$(@:.pdf_tex=.pdf) --export-latex
-	# fixes https://bugs.launchpad.net/ubuntu/+bug/1417470 in inkscape 0.91 since we don't use pages inside Figures
-	# works for up to 9 includegraphics in .pdf_tex
-	@sed -ir "/\\includegraphics\[width=[^,]+,page=[`pdfinfo $(@:.pdf_tex=.pdf) | sed -n 's/Pages: */1 + /p' | bc`-9]\]/d" $@
+ifeq ($(INKSCAPE_CLI),old)
+	inkscape -C -z --file=$< --export-pdf=$(@:.pdf_tex=.pdf) --export-latex
+	@# fixes https://bugs.launchpad.net/ubuntu/+bug/1417470 in inkscape 0.91 since we don't use pages inside Figures
+	@# works for up to 9 includegraphics in .pdf_tex
+	sed -ir "/\\includegraphics\[width=[^,]+,page=[`pdfinfo $(@:.pdf_tex=.pdf) | sed -n 's/Pages: */1 + /p' | bc`-9]\]/d" $@
+else
+	inkscape -C --export-latex -o $(@:.pdf_tex=.pdf) $<
+endif
 
 %_handout.pdf %_notes.pdf %.pdf: %.tex $(SVG_TEX_FIGS) $(SVG_PLAIN_FIGS) $(BIB)
 	$(LATEX) -jobname=$(basename $@) $(call IN_FILE, $*.tex)
