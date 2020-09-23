@@ -1,7 +1,8 @@
 \ProvidesPackage{beamertheme/BSC}[2019/06/25]
 
-\newcommand\version2
+\newcommand\version3
 \DeclareOption{pre2017}{\renewcommand\version1}
+\DeclareOption{pre2020}{\renewcommand\version2}
 \ProcessOptions
 \typeout{Version is \version}
 
@@ -76,7 +77,7 @@
 	\setbeamerfont{frametitle}{series=\bfseries}
 
 	% title page
-	\newcommand\frontpagebg{firstpage_v2.jpg}
+	\newcommand\frontpagebg{firstpage_v\version.jpg}
 	\setbeamercolor{title page}{bg=white}
 
 	\setbeamercolor{title page}{fg=black}
@@ -298,7 +299,7 @@
 
 \newenvironment{divider}{
 	\begingroup
-	\ifnum\version=2 \usebackgroundtemplate{\clippedfullsize{divider.jpg}}\fi
+	\ifnum\version>1 \usebackgroundtemplate{\clippedfullsize{divider_v\version.jpg}}\fi
 	\setbeamertemplate{footline}{\begin{beamercolorbox}[ht=0.8cm,dp=0.1cm,wd=.95\paperwidth]{}
 		\usebox{\bsclogo}\hfill\usebox{\romollogo}
 	\end{beamercolorbox}}
@@ -520,7 +521,7 @@
 	\bookmark[page=\the\c@page,level=1]{\thesection. \secname}
 	\ifnum\sectiontoc>0%
 	{
-		\ifnum\version=2\usebackgroundtemplate{\clippedfullsize{divider.jpg}}\fi%
+		\ifnum\version>1\usebackgroundtemplate{\clippedfullsize{divider_v\version.jpg}}\fi%
 		\frame{
 			\frametitle{Outline}
 			\tableofcontents[currentsection,hideothersubsections,sectionstyle=show/shaded]
