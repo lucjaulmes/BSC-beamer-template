@@ -82,25 +82,40 @@
 
 \begin{frame}[fragile]
 	\frametitle{Style definitions in theme}
-	\begin{block}{Slide themes}
-		\begin{itemize}
-			\item BSC look: first page, footer, header, bullets for blocks
-			\begin{itemize}
-				\item Also works for 16:9 aspect ratio
-				\item First version (before 2017) with \verb|\usetheme[pre2017]{/BSC}|
-				\item Previous version (before 2020) with \verb|\usetheme[pre2020]{/BSC}|
-			\end{itemize}
-			\item Outlines before each section
-		\end{itemize}
-	\end{block}
+	\begin{columns}[T]
+		\begin{column}{.75\linewidth}
+			\begin{block}{Slide themes}
+				\begin{itemize}
+					\item BSC look: first page, footer, header, bullets for blocks
+					\begin{itemize}
+						\item Also works for 16:9 aspect ratio
+						\item Previous versions: \verb|\usetheme[pre2017]{/BSC}|, \verb|\usetheme[pre2020]{/BSC}|
+					\end{itemize}
+					\item Outlines before each section
+				\end{itemize}
+			\end{block}
+		\end{column}
+		\begin{column}{.3\linewidth}
+			\begin{exampleblock}{Example blocks}
+				\begin{itemize}
+					\item With green bullets
+				\end{itemize}
+			\end{exampleblock}
+			\begin{alertblock}{Alert blocks}
+				\begin{itemize}
+					\item With red bullets
+				\end{itemize}
+			\end{alertblock}
+		\end{column}
+	\end{columns}
 	\pause
 	\note{Notes appear below the slide preview}%
-	\begin{columns}[T]
+	\begin{columns}
 		\begin{column}{.4\linewidth}
 			\begin{block}{New note page themes}
 				\begin{itemize}
-					\item \verb|simple|, without slide preview
-					\item \verb|big_preview|, with 75\% of the notes being a preview:
+					\item \verb|simple| (no slide preview)
+					\item \verb|big_preview|, with 75\% of the notes being a preview
 				\end{itemize}%
 			\end{block}
 		\end{column}
